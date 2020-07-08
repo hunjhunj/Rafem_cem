@@ -171,7 +171,7 @@ def find_avulsion(
             ch_depth,
             super_ratio,
             current_SL,
-        ) == 1:
+        ):
             is_superelevated = 1
             # if superelevation greater than trigger ratio, determine
             # new steepest descent path
