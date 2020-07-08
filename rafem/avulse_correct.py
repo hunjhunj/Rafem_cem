@@ -16,11 +16,13 @@ def avulse_to_new_path(
     z, old, new, sea_level, channel_depth, avulsion_type, slope, dx=1.0, dy=1.0,
 ):
     """Avulse the river to a new path.
+
     Given two river paths, *old* and *new*, avulse the river to a new river
     path. If the end point of the new path is contained in the old river
     path, the resulting path is the new path up until this point and then
     the old path. Otherwise, the resulting path is the new river path and
     will be downcut.
+
     Parameters
     ----------
     z : ndarray
@@ -39,43 +41,56 @@ def avulse_to_new_path(
         Spacing of columns of *z*.
     dy : float, optional
         Spacing of rows of *z*.
+
     Returns
     -------
     tuple
         Tuple of the new river path (as i, j indices) and the, possibly
         changed, avulsion type.
+
     Examples
     --------
     The following example uses a grid that looks like::
+
         o  +  *  *
         *  o  +  *
         *  *  +  *
         *  *  o  *
         *  o  *  *
+
     The old path is marked by `o`, the new path but `+`. The paths overlap
     (2, 2).
+
     >>> import numpy as np
     >>> z = np.ones((5, 4), dtype=float)
+
     >>> old = np.array((0, 1, 2, 3, 4)), np.array((0, 1, 2, 2, 1))
     >>> new = np.array((0, 1, 2)), np.array((1, 2, 2))
     >>> (new, atype) = avulse_to_new_path(z, old, new, 0., 0., 0)
+
     The new path follows the new path until the common point and then
     follows the old path. The new avulsion type is now 2.
+
     >>> new
     (array([0, 1, 2, 3, 4]), array([1, 2, 2, 2, 1]))
     >>> atype
     2
+
     In this example the old and new paths do not overlap::
+
         o  +  *  *
         *  o  +  *
         *  *  o  +
         *  *  o  +
         *  o  *  +
+
     >>> old = np.array((0, 1, 2, 3, 4)), np.array((0, 1, 2, 2, 1))
     >>> new = np.array((0, 1, 2, 3, 4)), np.array((1, 2, 3, 3, 3))
     >>> (new, atype) = avulse_to_new_path(z, old, new, 0., 0., 0)
+
     The new path is now, in fact, the actual new path and the avulsion
     type is unchanged.
+
     >>> new
     (array([0, 1, 2, 3, 4]), array([1, 2, 3, 3, 3]))
     >>> atype
@@ -104,31 +119,6 @@ def avulse_to_new_path(
 
     return (new_i, new_j), avulsion_type
 
-# def superelevate(
-#     riv_i,
-#     riv_j,
-#     n,
-#     super_ratio,
-#     current_SL,
-#     ch_depth,
-#     dt,
-#     dx=1.0,
-#     dy=1.0,
-# ):
-#     a = 0
-#     is_superelevated = 0
-#     for a in range(1, len(riv_i) - 1):
-#         if channel_is_superelevated(
-#             n,
-#             (riv_i[a], riv_j[a]),
-#             (riv_i[a - 1], riv_j[a - 1]),
-#             ch_depth,
-#             super_ratio,
-#             current_SL,
-#         ) == 1:
-#             is_superelevated = 1
-#
-#     return is_superelevated
 
 # determines if there is an avulsion along river course
 def find_avulsion(
@@ -159,7 +149,6 @@ def find_avulsion(
     crevasse_locs = np.zeros(3, dtype=np.int)
     path_diff = np.zeros(0)
     path_difference = 0
-    is_superelevated = 0
 
     old_length = find_riv_path_length(n, old, current_SL, ch_depth, slope, dx=dx, dy=dy)
 
@@ -171,8 +160,8 @@ def find_avulsion(
             ch_depth,
             super_ratio,
             current_SL,
-        ) == 1:
-            is_superelevated = 1
+        ):
+
             # if superelevation greater than trigger ratio, determine
             # new steepest descent path
             new = steep_desc.find_course(
@@ -320,4 +309,4 @@ def find_avulsion(
         n_splay = n - n_before_splay
         splay_depth += n_splay
 
-    return (new, avulsion_type, loc, avulse_length, path_difference, splay_depth, is_superelevated)
+    return (new, avulsion_type, loc, avulse_length, path_difference, splay_depth)

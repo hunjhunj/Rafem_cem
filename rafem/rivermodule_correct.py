@@ -15,11 +15,9 @@ _SECONDS_PER_DAY = 86400.0
 
 def make_empty_file(path):
     """Create an empty file.
-
     Create an empty file along with all of its parent folders,
     if necessary. Note that if the file already exists, it
     will be clobbered.
-
     Parameters
     ----------
     path : str
@@ -71,7 +69,6 @@ class RiverModule(object):
         savecourseupdates=False,
     ):
         """The RAFEM.
-
         Parameters
         ----------
         rand_seed : int

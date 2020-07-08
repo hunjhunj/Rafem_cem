@@ -69,7 +69,6 @@ class RiverModule(object):
         splay_type=2,
         saveavulsions=True,
         savecourseupdates=False,
-        saveoldmouthfile=True,
     ):
         """The RAFEM.
 
@@ -205,10 +204,8 @@ class RiverModule(object):
 
         # Saving information
         self._saveavulsions = saveavulsions
-        self._avulsionfile = os.path.abspath("../output_data/avulsion_info.out") #
-        self._oldmouthfile = os.path.abspath("../output_data/oldmouthfile.out") #
+        self._avulsionfile = os.path.abspath("../output_data/avulsion_info.csv")
         self._saveupdates = savecourseupdates
-        self._saveoldmouthfile = saveoldmouthfile
         self._save_splay_deposit = False
 
         if self._saveupdates:
@@ -217,8 +214,6 @@ class RiverModule(object):
             make_empty_file(self._avulsionfile)
         if self._save_splay_deposit:
             make_empty_file(self._savesplay_deposit)
-        if self._saveoldmouthfile:
-            make_empty_file(self._oldmouthfile)                                  #
 
         self._riv_i, self._riv_j = steep_desc.find_course(
             self._n,
@@ -228,7 +223,6 @@ class RiverModule(object):
             self._ch_depth,
             sea_level=self._SL,
         )
-
 
         # downcut into new river course by amount determined by init_cut
         downcut.cut_init(self._riv_i, self._riv_j, self._n, init_cut)
@@ -335,7 +329,6 @@ class RiverModule(object):
             params = dict()
         return cls(**params)
 
-
     def advance_in_time(self):
         """ Update avulsion model one time step. """
         # if (self._time / _SECONDS_PER_YEAR) > 2000:
@@ -364,40 +357,6 @@ class RiverModule(object):
             self._SLRR,
         )
 
-        # #If supereleveated
-        # for a in range(1, len(self._riv_i) - 1):
-        #     if avulsion_utils.channel_is_superelevated(
-        #         self._n,
-        #         (self._riv_i[self._a], self._riv_j[self._a]),
-        #         (self._riv_i[self._a - 1], self._riv_j[self._a - 1]),
-        #         self._ch_depth,
-        #         self._super_ratio,
-        #         self._SL,
-        #     ):
-        #         self._superelev == 1
-        #     else:
-        #         self._superelev == 0
-        #
-        # self._superelev = avulsion_utils.channel_is_superelevated(
-        #             z=self._n,
-        #             riv=(self._riv_i[self._a], self._riv_j[self._a]),
-        #             behind=(self._riv_i[self._a - 1], self._riv_j[self._a - 1]),
-        #             channel_depth=self._ch_depth,
-        #             super_ratio=self._super_ratio,
-        #             sea_level=self._SL,
-        # )
-        # self._is_superelevated = avulse.superelevate(
-        #     self._riv_i,
-        #     self._riv_j,
-        #     self._n,
-        #     self._super_ratio,
-        #     self._SL,
-        #     self._ch_depth,
-        #     self._dt,
-        #     dx=self._dx,
-        #     dy=self._dy,
-        # )
-
         """ Save every time the course changes? """
         if self._saveupdates and self._course_update > 0:
             with open(self._saveupdates, "a") as file:
@@ -414,7 +373,6 @@ class RiverModule(object):
             self._avulse_length,
             self._path_diff,
             self._splay_deposit,
-            self._is_superelevated,
         ) = avulse.find_avulsion(
             self._riv_i,
             self._riv_j,
@@ -431,18 +389,6 @@ class RiverModule(object):
             dx=self._dx,
             dy=self._dy,
         )
-
-        if self._saveoldmouthfile:
-            with open(self._oldmouthfile, "a") as file:
-                file.write(
-                    "%.5f %.5f %.5f %i \n"
-                    % (
-                        (self._time / _SECONDS_PER_YEAR),
-                        self._riv_i[-1],
-                        self._riv_j[-1],
-                        self._is_superelevated,
-                    )
-                )
 
         """ Save avulsion record. """
         if self._saveavulsions and self._avulsion_type > 0:

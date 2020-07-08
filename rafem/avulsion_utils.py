@@ -53,7 +53,9 @@ def channel_is_superelevated(z, riv, behind, channel_depth, super_ratio, sea_lev
     """
     superelev = 0
     z_bankfull = z[riv] + channel_depth
-
+    adj1 = []
+    adj2 = []
+#    global adj1, adj2
     # cross-shore river orientation
     if behind[0] + 1 == riv[0]:
         if riv[1] == 0:
