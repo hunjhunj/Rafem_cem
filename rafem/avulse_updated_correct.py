@@ -234,7 +234,6 @@ def find_avulsion(
                         n[new[0][a], new[1][a]] - n[new[0][-1], new[1][-1]]
                     ) / avulsed_length
 
-
                 avul_locs = np.append(avul_locs, a)
                 path_slopes = np.append(path_slopes, slope_new_path)
                 path_diff = np.append(path_diff, (old_length - new_length))
@@ -286,8 +285,9 @@ def find_avulsion(
         new = riv_i, riv_j
 
     if (crevasse_locs.sum() > 0) and (splay_type > 0):
-        avulsion_type = 3
+
         n_before_splay = np.copy(n)
+
         # Don' think we need to worry about preserving old river elevations??
         # old_river_elevations = n[riv_i, riv_j]
         new_river_elevations = n[new[0], new[1]]

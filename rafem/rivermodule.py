@@ -435,12 +435,13 @@ class RiverModule(object):
         if self._saveoldmouthfile:
             with open(self._oldmouthfile, "a") as file:
                 file.write(
-                    "%.5f %.5f %.5f %i \n"
+                    "%.5f %.5f %.5f %i %i\n"
                     % (
                         (self._time / _SECONDS_PER_YEAR),
                         self._riv_i[-1],
                         self._riv_j[-1],
                         self._is_superelevated,
+                        self._avulsion_type,
                     )
                 )
 
